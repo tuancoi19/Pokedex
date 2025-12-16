@@ -1,5 +1,7 @@
 package com.example.pokedex.data.enum
 
+import com.example.pokedex.R
+
 enum class Sort {
     Number, Name;
 
@@ -7,5 +9,11 @@ enum class Sort {
         get() = when (this) {
             Number -> "Number"
             Name -> "Name"
+        }
+
+    val icon: Int
+        get() = when (this) {
+            Number -> R.drawable.ic_number
+            Name -> R.drawable.ic_name
         }
 }

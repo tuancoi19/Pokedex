@@ -1,29 +1,47 @@
 package com.example.pokedex
 
-import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.pokedex.ui.component.PokemonCard
-import com.example.pokedex.ui.screens.dex.Dex
-import com.example.pokedex.ui.theme.PokedexTheme
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.example.pokedex.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PokedexTheme {
-                Dex()
-            }
+            AppNavigation()
+        }
+    }
+}
+
+@Composable
+fun SystemBarsColor(
+    statusBarColor: Color,
+    navigationBarColor: Color,
+    darkIcons: Boolean
+) {
+    val view = LocalView.current
+    val activity = view.context as Activity
+
+    SideEffect {
+        val window = activity.window
+        window.statusBarColor = statusBarColor.toArgb()
+        window.navigationBarColor = navigationBarColor.toArgb()
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        WindowInsetsControllerCompat(window, view).apply {
+            isAppearanceLightStatusBars = darkIcons
+            isAppearanceLightNavigationBars = darkIcons
         }
     }
 }
