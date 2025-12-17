@@ -11,11 +11,10 @@ fun String.capitalize(join: String = " "): String {
 }
 
 fun Int.formatNumber(withHash: Boolean = true): String {
-    val number = String.format("#%03d", this)
+    val number = this.toString()
 
-    return if (withHash) {
-        "#$number"
-    } else {
-        number
+    return buildString {
+        if (withHash) append('#')
+        append(number.padStart(3, '0'))
     }
 }

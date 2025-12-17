@@ -53,7 +53,7 @@ fun List() {
                     vertical = 24.dp
                 )
             ) {
-                items(items) { item ->
+                items(3) { item ->
                     PokemonCard()
                 }
             }
