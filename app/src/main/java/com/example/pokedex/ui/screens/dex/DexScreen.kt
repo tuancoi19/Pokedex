@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.pokedex.ui.screens.dex.list.List
 import com.example.pokedex.ui.screens.dex.top_bar.TopBar
 
 @Composable
@@ -20,7 +21,5 @@ fun DexScreen(
             )
         },
         modifier = Modifier.safeDrawingPadding()
-    ) { _ ->
-
-    }
+    ) { _ -> List() }
 }

@@ -10,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pokedex.di.DexVMFactory
 import com.example.pokedex.ui.screens.dex.DexScreen
 import com.example.pokedex.ui.screens.dex.DexVM
-import com.yamaha.meisterstudio.ui.navigation.Routes
 
 @Composable
 fun AppNavigation(
@@ -23,9 +22,7 @@ fun AppNavigation(
                 backStackEntry,
                 factory = DexVMFactory(LocalContext.current.applicationContext as Application),
             )
-            DexScreen(
-                viewModel = viewModel,
-            )
+            DexScreen(viewModel = viewModel)
         }
     }
 }

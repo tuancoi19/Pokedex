@@ -36,7 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.example.pokedex.R
-import com.example.pokedex.data.enum.Sort
+import com.example.pokedex.data.enums.Sort
 import com.example.pokedex.ui.theme.Body3
 import com.example.pokedex.ui.theme.Headline
 import com.example.pokedex.ui.theme.Subtitle2
@@ -56,7 +56,7 @@ fun TopBar(
         Modifier
             .fillMaxWidth()
             .background(color = primary)
-            .padding(12.dp)
+            .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Title()

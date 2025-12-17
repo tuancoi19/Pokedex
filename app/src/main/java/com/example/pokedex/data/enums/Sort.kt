@@ -1,4 +1,4 @@
-package com.example.pokedex.data.enum
+package com.example.pokedex.data.enums
 
 import com.example.pokedex.R
 

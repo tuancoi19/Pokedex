@@ -30,7 +30,12 @@ import com.example.pokedex.ui.theme.medium
 import com.example.pokedex.ui.theme.white
 
 @Composable
-fun PokemonCard(id: Int = 999, name: String = "Pokémon Name", image: String?, onTap: () -> Unit) {
+fun PokemonCard(
+    id: Int = 999,
+    name: String = "Pokémon Name",
+    image: String? = null,
+    onTap: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .dropShadow(
@@ -82,7 +87,6 @@ fun PokemonCard(id: Int = 999, name: String = "Pokémon Name", image: String?, o
             modifier = Modifier
                 .size(72.dp)
                 .align(Alignment.Center),
-
-            )
+        )
     }
 }

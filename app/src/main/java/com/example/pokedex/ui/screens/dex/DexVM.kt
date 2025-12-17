@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import com.example.pokedex.data.enum.Sort
+import com.example.pokedex.data.enums.Sort
 
 class DexVM(private val application: Application) :
     AndroidViewModel(application = application) {
