@@ -1,5 +1,7 @@
 package com.example.pokedex.ui.screens.dex
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,5 +23,9 @@ fun DexScreen(
             )
         },
         modifier = Modifier.safeDrawingPadding()
-    ) { _ -> List() }
+    ) { padding ->
+        Box(Modifier.padding(padding)) {
+            List()
+        }
+    }
 }

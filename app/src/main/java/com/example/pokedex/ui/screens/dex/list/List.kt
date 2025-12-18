@@ -1,6 +1,7 @@
 package com.example.pokedex.ui.screens.dex.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +18,9 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.example.pokedex.ui.component.PokemonCard
+import com.example.pokedex.ui.theme.background
 import com.example.pokedex.ui.theme.primary
+import com.example.pokedex.ui.theme.white
 
 @Composable
 fun List() {
@@ -34,7 +37,12 @@ fun List() {
     ) {
         Box(
             Modifier
+                .fillMaxSize()
                 .clip(shape = RoundedCornerShape(8.dp))
+                .background(
+                    color = white,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .innerShadow(
                     shape = RoundedCornerShape(8.dp),
                     shadow = Shadow(
@@ -46,14 +54,16 @@ fun List() {
                 )
         ) {
             LazyVerticalGrid(
-                columns = GridCells.FixedSize(size = 104.dp),
+                columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(
                     horizontal = 12.dp,
                     vertical = 24.dp
                 )
             ) {
-                items(3) { item ->
+                items(20) { item ->
                     PokemonCard()
                 }
             }

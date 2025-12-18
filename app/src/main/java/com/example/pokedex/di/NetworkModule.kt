@@ -3,7 +3,6 @@ package com.example.pokedex.di
 // NetworkModule.kt
 import com.example.pokedex.data.datasources.ApiUrl
 import com.example.pokedex.network.ApiInterceptor
-import com.google.firebase.appdistribution.gradle.ApiEndpoints
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
