@@ -1,6 +1,7 @@
 package com.example.pokedex.di
 
 // NetworkModule.kt
+import com.example.pokedex.data.datasources.ApiService
 import com.example.pokedex.data.datasources.ApiUrl
 import com.example.pokedex.network.ApiInterceptor
 import okhttp3.OkHttpClient
@@ -22,11 +23,12 @@ object NetworkModule {
             .build()
     }
 
-    val retrofit: Retrofit by lazy {
+    val apiService: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(ApiUrl.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+            .create(ApiService::class.java)
     }
 }

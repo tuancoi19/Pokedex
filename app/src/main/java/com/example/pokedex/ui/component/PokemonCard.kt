@@ -3,6 +3,8 @@ package com.example.pokedex.ui.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,18 +39,20 @@ fun PokemonCard(
     onTap: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier
+        modifier = Modifier.fillMaxWidth()
+            .aspectRatio(104f / 108f)
             .dropShadow(
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(8.dp),
                 shadow = Shadow(
                     radius = 3.dp,
                     spread = 1.dp,
                     color = Color.Black.copy(alpha = 0.2f),
-                    offset = DpOffset(x = 0.dp, 1.dp)
+                    offset = DpOffset(
+                        x = 0.dp,
+                        1.dp
+                    )
                 )
             )
-            .width(104.dp)
-            .height(108.dp)
             .background(color = white, shape = RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
 
@@ -65,10 +69,15 @@ fun PokemonCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(44.dp)
+                .fillMaxHeight(0.41f)
                 .align(Alignment.BottomCenter)
                 .background(color = background)
-                .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 8.dp,
+                        topEnd = 8.dp
+                    )
+                )
         )
 
         Text(
@@ -77,15 +86,20 @@ fun PokemonCard(
             style = Body3,
             modifier = Modifier
                 .align(alignment = Alignment.BottomCenter)
-                .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
+                .padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                    bottom = 4.dp
+                )
         )
 
         Image(
             painter = painterResource(R.drawable.ic_poke_placeholder),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.Fit,
             contentDescription = null,
             modifier = Modifier
-                .size(72.dp)
+                .fillMaxWidth(0.69f)
+                .aspectRatio(1f)
                 .align(Alignment.Center),
         )
     }
