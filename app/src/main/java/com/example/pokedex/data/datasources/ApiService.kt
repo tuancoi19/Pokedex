@@ -1,7 +1,7 @@
 package com.example.pokedex.data.datasources
 
 import com.example.pokedex.data.models.Pokemon
-import com.example.pokedex.data.models.PokemonDetail
+import com.example.pokedex.data.models.pokemon.PokemonDetail
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

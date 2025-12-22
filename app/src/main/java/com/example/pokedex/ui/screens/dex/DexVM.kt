@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokedex.data.enums.LoadStatus
 import com.example.pokedex.data.enums.Sort
-import com.example.pokedex.data.models.Pokemon
+import com.example.pokedex.data.models.pokemon.Pokemon
 import com.example.pokedex.data.repositories.pokemon.PokemonRepository
 import com.example.pokedex.data.repositories.pokemon.PokemonRepositoryImpl
 import com.example.pokedex.di.NetworkModule
@@ -34,6 +34,11 @@ class DexVM(
     val loadStatus: State<LoadStatus> = _loadStatus
 
     private var _offset: Int = 0
+    private var _count: Int = 0
+
+    init {
+        loadPokemon()
+    }
 
     fun setSearchText(text: String) {
         _searchText.value = text
@@ -46,17 +51,24 @@ class DexVM(
         }
     }
 
-    fun loadNews() {
+    fun loadPokemon() {
+        if (_offset >= _count) return
+
         _loadStatus.value = LoadStatus.Loading
         viewModelScope.launch {
             try {
-                val pokemon = repository.getPokemon(
+                val response = repository.getPokemon(
                     _offset,
                     AppConstant.PAGE_SIZE
                 )
-                _pokemon.value = pokemon
+
+                _pokemon.value = response.result
+                _offset += AppConstant.PAGE_SIZE
+                if (_count != response.count) _count = response.count
+                _loadStatus.value = LoadStatus.Success
             } catch (e: Exception) {
                 println("Error: ${e.message}")
+                _loadStatus.value = LoadStatus.Error
             }
         }
     }

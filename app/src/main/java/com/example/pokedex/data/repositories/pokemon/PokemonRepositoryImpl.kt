@@ -2,7 +2,7 @@ package com.example.pokedex.data.repositories.pokemon
 
 import com.example.pokedex.data.datasources.ApiService
 import com.example.pokedex.data.models.Pokemon
-import com.example.pokedex.data.models.PokemonDetail
+import com.example.pokedex.data.models.pokemon.PokemonDetail
 
 class PokemonRepositoryImpl(private val api: ApiService) : PokemonRepository {
     override suspend fun getPokemon(

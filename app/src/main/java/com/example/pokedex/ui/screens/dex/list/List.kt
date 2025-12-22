@@ -17,13 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.example.pokedex.data.models.pokemon.Pokemon
 import com.example.pokedex.ui.component.PokemonCard
-import com.example.pokedex.ui.theme.background
 import com.example.pokedex.ui.theme.primary
 import com.example.pokedex.ui.theme.white
 
 @Composable
-fun List() {
+fun List(
+    pokemon: List<Pokemon>,
+    onTap: (Int) -> Unit
+) {
     Box(
         Modifier
             .fillMaxSize()
@@ -63,8 +66,13 @@ fun List() {
                     vertical = 24.dp
                 )
             ) {
-                items(20) { item ->
-                    PokemonCard()
+                items(pokemon.size) { index ->
+                    PokemonCard(
+                        id = pokemon[index].id,
+                        name = pokemon[index].name,
+                        image = pokemon[index].imageUrl,
+                        onTap = { onTap(pokemon[index].id) }
+                    )
                 }
             }
         }

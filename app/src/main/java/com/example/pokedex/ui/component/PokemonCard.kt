@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,10 +27,11 @@ import com.example.pokedex.ui.theme.background
 import com.example.pokedex.ui.theme.dark
 import com.example.pokedex.ui.theme.medium
 import com.example.pokedex.ui.theme.white
+import com.example.pokedex.utils.formatNumber
 
 @Composable
 fun PokemonCard(
-    id: Int = 999,
+    id: Int,
     name: String = "Pokémon Name",
     image: String? = null,
     onTap: () -> Unit = {}
@@ -58,7 +56,7 @@ fun PokemonCard(
 
     ) {
         Text(
-            "#$id",
+            id.formatNumber(),
             color = medium,
             style = Caption,
             modifier = Modifier

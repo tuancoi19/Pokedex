@@ -11,7 +11,8 @@ import com.example.pokedex.ui.screens.dex.top_bar.TopBar
 
 @Composable
 fun DexScreen(
-    viewModel: DexVM
+    viewModel: DexVM,
+    onNavigateToDetail: (Int) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -25,7 +26,10 @@ fun DexScreen(
         modifier = Modifier.safeDrawingPadding()
     ) { padding ->
         Box(Modifier.padding(padding)) {
-            List()
+            List(
+                pokemon = viewModel.pokemon.value,
+                onTap = onNavigateToDetail
+            )
         }
     }
 }
