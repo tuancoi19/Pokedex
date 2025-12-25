@@ -1,6 +1,7 @@
 package com.example.pokedex.data.datasources
 
-import com.example.pokedex.data.models.Pokemon
+import com.example.pokedex.data.models.ArrayResponse
+import com.example.pokedex.data.models.pokemon.Pokemon
 import com.example.pokedex.data.models.pokemon.PokemonDetail
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,7 +12,7 @@ interface ApiService {
     suspend fun getPokemon(
         @Query("offset") offset: Int,
         @Query("limit") limit: Int
-    ): List<Pokemon>
+    ): ArrayResponse<Pokemon>
 
     @GET(ApiUrl.GET_POKEMON_DETAIL)
     suspend fun getPokemonDetail(

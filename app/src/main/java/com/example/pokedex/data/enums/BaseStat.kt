@@ -1,8 +1,6 @@
 package com.example.pokedex.data.enums
 
-import com.example.pokedex.data.enums.Sort.Name
-
-enum class Stat(val value: String) {
+enum class BaseStat(val value: String) {
     HP("hp"),
     ATK("attack"),
     DEF("defense"),
@@ -11,7 +9,7 @@ enum class Stat(val value: String) {
     SPD("speed");
 
     companion object {
-        fun fromValue(value: String): Stat =
-            Stat.entries.first { it.value == value }
+        fun fromValue(value: String): BaseStat =
+            BaseStat.entries.first { it.value == value }
     }
 }

@@ -6,6 +6,6 @@ data class ArrayResponse<T>(
     @SerializedName("count")
     val count: Int,
 
-    @SerializedName("result")
-    val result: List<T>
+    @SerializedName("results")
+    val results: List<T>
 )

@@ -1,7 +1,7 @@
 package com.example.pokedex.ui.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,16 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
+import coil.compose.AsyncImage
 import com.example.pokedex.R
 import com.example.pokedex.ui.theme.Body3
 import com.example.pokedex.ui.theme.Caption
@@ -36,8 +39,11 @@ fun PokemonCard(
     image: String? = null,
     onTap: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .aspectRatio(104f / 108f)
             .dropShadow(
                 shape = RoundedCornerShape(8.dp),
@@ -51,8 +57,11 @@ fun PokemonCard(
                     )
                 )
             )
-            .background(color = white, shape = RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
+            .background(color = white, shape = RoundedCornerShape(8.dp))
+            .clickable(
+                onClick = onTap
+            )
 
     ) {
         Text(
@@ -91,10 +100,17 @@ fun PokemonCard(
                 )
         )
 
-        Image(
-            painter = painterResource(R.drawable.ic_poke_placeholder),
-            contentScale = ContentScale.Fit,
+        AsyncImage(
+            model = image,
             contentDescription = null,
+            imageLoader = remember {
+                ImageLoader.Builder(context)
+                    .placeholder(R.drawable.ic_poke_placeholder)
+                    .error(R.drawable.ic_poke_placeholder)
+                    .crossfade(true)
+                    .build()
+            },
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth(0.69f)
                 .aspectRatio(1f)

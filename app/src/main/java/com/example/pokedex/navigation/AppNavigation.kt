@@ -7,7 +7,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pokedex.di.DetailsVMFactory
 import com.example.pokedex.di.DexVMFactory
+import com.example.pokedex.ui.screens.details.DetailsScreen
+import com.example.pokedex.ui.screens.details.DetailsVM
 import com.example.pokedex.ui.screens.dex.DexScreen
 import com.example.pokedex.ui.screens.dex.DexVM
 
@@ -22,7 +25,20 @@ fun AppNavigation(
                 backStackEntry,
                 factory = DexVMFactory(LocalContext.current.applicationContext as Application),
             )
-            DexScreen(viewModel = viewModel)
+            DexScreen(
+                viewModel = viewModel,
+                onNavigateToDetail = { id ->
+                    navController.navigate(Routes.Detail.route)
+                },
+            )
+        }
+
+        composable(Routes.Detail.route) { backStackEntry ->
+            val viewModel: DetailsVM = viewModel(
+                backStackEntry,
+                factory = DetailsVMFactory(LocalContext.current.applicationContext as Application),
+            )
+            DetailsScreen(viewModel = viewModel)
         }
     }
 }

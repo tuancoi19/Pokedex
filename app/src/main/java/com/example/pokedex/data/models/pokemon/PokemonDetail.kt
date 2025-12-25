@@ -1,7 +1,8 @@
 package com.example.pokedex.data.models.pokemon
 
 import com.google.gson.annotations.SerializedName
-import com.example.pokedex.data.enums.Stat
+import com.example.pokedex.data.enums.BaseStat
+import com.example.pokedex.data.enums.TypeEnum
 import com.example.pokedex.utils.formatNumber
 
 data class PokemonDetail(
@@ -15,7 +16,7 @@ data class PokemonDetail(
     private val sprites: Sprites,
 
     @SerializedName("types")
-    private val types: List<Types>,
+    val types: List<Types>,
 
     @SerializedName("height")
     val height: Int,
@@ -24,13 +25,16 @@ data class PokemonDetail(
     val weight: Int,
 
     @SerializedName("moves")
-    val moves: List<Moves>,
+    val moves: List<Move>,
 
     @SerializedName("stats")
     val stats: List<Stats>
 ) {
     val number: String
         get() = id.formatNumber()
+
+    val imageUrl: String
+        get() = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
 }
 
 data class Sprites(
@@ -46,33 +50,33 @@ data class Types(
 data class Type(
     @SerializedName("name")
     val name: String
-)
-
-data class Moves(
-    @SerializedName("moves")
-    val move: Move
-)
+) {
+    val typeEnum: TypeEnum
+        get() = TypeEnum.fromValue(name)
+}
 
 data class Move(
+    @SerializedName("move")
+    val move: MoveEntity
+)
+
+data class MoveEntity(
     @SerializedName("name")
     val name: String
 )
 
 data class Stats(
     @SerializedName("base_stat")
-    private val baseStat: Int,
+    val baseStat: Int,
 
     @SerializedName("stat")
     val stat: Stat
-) {
-    val index: String
-        get() = baseStat.formatNumber(false)
-}
+)
 
 data class Stat(
     @SerializedName("name")
     val name: String
 ) {
-    val type: Stat
-        get() = Stat.fromValue(name)
+    val type: BaseStat
+        get() = BaseStat.fromValue(name)
 }

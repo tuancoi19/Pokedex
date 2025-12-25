@@ -10,6 +10,9 @@ val medium = Color(0xFF666666)
 val background = Color(0xFFEFEFEF)
 val dark = Color(0xFF212121)
 val white = Color(0xFFFFFFFF)
+val wireframe = Color(0xFFB8B8B8)
+val light = Color(0xFFE0E0E0)
+
 
 // Type
 val typeBug = Color(0xFFA7B723)
