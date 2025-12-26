@@ -10,7 +10,7 @@ data class PokemonDetail(
     val name: String,
 
     @SerializedName("id")
-    private val id: Int,
+    val id: Int,
 
     @SerializedName("sprites")
     private val sprites: Sprites,

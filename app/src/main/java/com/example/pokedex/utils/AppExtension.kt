@@ -18,3 +18,11 @@ fun Int.formatNumber(withHash: Boolean = true): String {
         append(number.padStart(3, '0'))
     }
 }
+
+fun Int.formatMeasureIndex(): String {
+    val number = this.toString()
+
+    if (number.length <= 1) return "0,$number"
+    val index = number.length - 1
+    return number.take(index) + "," + number.substring(index)
+}

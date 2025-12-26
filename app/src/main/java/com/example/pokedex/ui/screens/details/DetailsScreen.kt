@@ -2,6 +2,7 @@ package com.example.pokedex.ui.screens.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,11 +37,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.example.pokedex.R
-import com.example.pokedex.data.enums.TypeEnum
+import com.example.pokedex.data.enums.LoadStatus
+import com.example.pokedex.data.models.pokemon.Types
+import com.example.pokedex.ui.component.AppCircularProgressIndicator
+import com.example.pokedex.ui.component.AppErrorDex
 import com.example.pokedex.ui.theme.Body3
 import com.example.pokedex.ui.theme.Caption
 import com.example.pokedex.ui.theme.Headline
@@ -53,59 +56,80 @@ import com.example.pokedex.ui.theme.medium
 import com.example.pokedex.ui.theme.white
 import com.example.pokedex.ui.theme.wireframe
 import com.example.pokedex.utils.capitalize
+import com.example.pokedex.utils.formatMeasureIndex
 import com.example.pokedex.utils.formatNumber
 
 @Composable
-fun DetailsScreen(viewModel: DetailsVM) {
+fun DetailsScreen(
+    viewModel: DetailsVM, id: Int, onBack: () -> Unit = {}
+) {
     LaunchedEffect(Unit) {
-        viewModel.loadPokemonDetail(1)
+        viewModel.loadPokemonDetail(id)
     }
 
     val pokemonDetail = viewModel.pokemonDetail.value
+    val isLoading = viewModel.loadStatus.value == LoadStatus.Loading
+    val hasData = viewModel.pokemonDetail.value != null
 
-    if (pokemonDetail == null) {
-        Box {}
-    } else {
-        Scaffold(
-            modifier = Modifier.safeDrawingPadding()
-        ) { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        pokemonDetail?.types?.first()?.type?.typeEnum?.color
-                            ?: wireframe
-                    )
-                    .padding(padding)
+    Scaffold(
+        modifier = Modifier.safeDrawingPadding()
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    if (!isLoading && hasData) pokemonDetail!!.types.first().type.typeEnum.color
+                    else wireframe
+                )
+                .padding(padding)
+        ) {
+            Background()
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Background()
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    TopBar(
-                        name = pokemonDetail?.name ?: "",
-                        number = pokemonDetail?.number ?: ""
-                    )
-                    ImageSlider(image = pokemonDetail?.imageUrl)
-                    TypeList(
-                        type1 = pokemonDetail?.types[0]?.type?.typeEnum ?: TypeEnum.Normal,
-                        type2 = pokemonDetail?.types[1]?.type?.typeEnum ?: TypeEnum.Normal
-                    )
+                TopBar(
+                    name = pokemonDetail?.name?.capitalize() ?: "Pokémon Name",
+                    number = pokemonDetail?.number ?: "#000",
+                    onBack = onBack
+                )
+                ImageSlider(image = pokemonDetail?.imageUrl, onLeftClick = {
+                    if (hasData) {
+                        viewModel.loadPokemonDetail((viewModel.currentID.value ?: id) - 1)
+                    }
+                }, onRightClick = {
+                    if (hasData) {
+                        viewModel.loadPokemonDetail((viewModel.currentID.value ?: id) + 1)
+                    }
+                })
+                if (isLoading) {
+                    Box(
+                        Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                    ) {
+                        AppCircularProgressIndicator(color = wireframe)
+                    }
+                } else if (hasData) {
+                    TypeList(typeList = pokemonDetail!!.types)
                     Spacer(Modifier.height(16.dp))
                     About(
-                        color = pokemonDetail?.types[0]?.type?.typeEnum?.color ?: wireframe,
-                        weight = pokemonDetail?.weight.toString(),
-                        height = pokemonDetail?.height.toString(),
-                        moves = pokemonDetail?.moves?.map { move -> move.move.name.capitalize("-") }
-                            ?.take(2)
-                            ?: listOf()
+                        color = pokemonDetail.types.first().type.typeEnum.color,
+                        weight = pokemonDetail.weight.formatMeasureIndex(),
+                        height = pokemonDetail.height.formatMeasureIndex(),
+                        moves = pokemonDetail.moves.map { move ->
+                            move.move.name.capitalize("-")
+                        }.take(2)
                     )
                     Spacer(Modifier.height(16.dp))
                     BaseStats(
-                        color = pokemonDetail?.types[0]?.type?.typeEnum?.color ?: wireframe,
-                        stats = pokemonDetail?.stats?.map { stat -> stat.baseStat } ?: listOf())
+                        color = pokemonDetail.types.first().type.typeEnum.color,
+                        stats = pokemonDetail.stats.map { stat -> stat.baseStat })
+                } else {
+                    AppErrorDex(onRetry = {
+                        viewModel.loadPokemonDetail(
+                            viewModel.currentID.value ?: id
+                        )
+                    })
                 }
             }
         }
@@ -119,7 +143,9 @@ private fun Background() {
             painter = painterResource(R.drawable.ic_poke_ball),
             modifier = Modifier
                 .align(alignment = Alignment.End)
-                .padding(top = 8.dp, end = 8.dp)
+                .padding(
+                    top = 8.dp, end = 8.dp
+                )
                 .size(208.dp),
             contentDescription = null,
             colorFilter = ColorFilter.tint(
@@ -131,24 +157,19 @@ private fun Background() {
                 .fillMaxSize()
                 .weight(1f)
                 .padding(
-                    start = 4.dp,
-                    end = 4.dp,
-                    bottom = 4.dp
+                    start = 4.dp, end = 4.dp, bottom = 4.dp
                 )
                 .clip(RoundedCornerShape(8.dp))
                 .background(
-                    color = white,
-                    shape = RoundedCornerShape(8.dp)
+                    color = white, shape = RoundedCornerShape(8.dp)
                 )
                 .innerShadow(
-                    shape = RoundedCornerShape(8.dp),
-                    shadow = Shadow(
+                    shape = RoundedCornerShape(8.dp), shadow = Shadow(
                         radius = 3.dp,
                         spread = 1.dp,
                         color = Color.Black.copy(alpha = 0.25f),
                         offset = DpOffset(
-                            x = 0.dp,
-                            1.dp
+                            x = 0.dp, y = 1.dp
                         )
                     )
                 )
@@ -158,19 +179,19 @@ private fun Background() {
 }
 
 @Composable
-private fun TopBar(name: String, number: String) {
+private fun TopBar(
+    name: String, number: String, onBack: () -> Unit
+) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(
-            start = 20.dp,
-            top = 20.dp,
-            end = 20.dp,
-            bottom = 24.dp
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
+            start = 20.dp, top = 20.dp, end = 20.dp, bottom = 24.dp
         )
     ) {
         Image(
             painter = painterResource(R.drawable.ic_arrow_back),
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier
+                .size(32.dp)
+                .clickable(onClick = onBack),
             contentDescription = null,
             colorFilter = ColorFilter.tint(
                 white
@@ -180,10 +201,7 @@ private fun TopBar(name: String, number: String) {
         Spacer(Modifier.width(8.dp))
 
         Text(
-            name,
-            style = Headline,
-            color = white,
-            modifier = Modifier.weight(1f)
+            name, style = Headline, color = white, modifier = Modifier.weight(1f)
         )
 
         Spacer(Modifier.width(8.dp))
@@ -197,16 +215,19 @@ private fun TopBar(name: String, number: String) {
 }
 
 @Composable
-private fun ImageSlider(image: String? = null) {
+private fun ImageSlider(
+    image: String? = null, onLeftClick: () -> Unit = {}, onRightClick: () -> Unit = {}
+) {
     val context = LocalContext.current
 
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
     ) {
         Image(
             painter = painterResource(R.drawable.ic_chevron_left),
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier
+                .size(24.dp)
+                .clickable(onClick = onLeftClick),
             contentDescription = null,
             colorFilter = ColorFilter.tint(
                 white
@@ -216,24 +237,19 @@ private fun ImageSlider(image: String? = null) {
         Spacer(Modifier.width(32.dp))
 
         AsyncImage(
-            model = image,
-            contentDescription = null,
-            imageLoader = remember {
-                ImageLoader.Builder(context)
-                    .placeholder(R.drawable.ic_poke_placeholder)
-                    .error(R.drawable.ic_poke_placeholder)
-                    .crossfade(true)
-                    .build()
-            },
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.size(200.dp)
+            model = image, contentDescription = null, imageLoader = remember {
+                ImageLoader.Builder(context).placeholder(R.drawable.ic_poke_placeholder)
+                    .error(R.drawable.ic_poke_placeholder).crossfade(true).build()
+            }, contentScale = ContentScale.FillBounds, modifier = Modifier.size(200.dp)
         )
 
         Spacer(Modifier.width(32.dp))
 
         Image(
             painter = painterResource(R.drawable.ic_chevron_right),
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier
+                .size(24.dp)
+                .clickable(onClick = onRightClick),
             contentDescription = null,
             colorFilter = ColorFilter.tint(
                 white
@@ -243,41 +259,38 @@ private fun ImageSlider(image: String? = null) {
 }
 
 @Composable
-private fun TypeList(
-    type1: TypeEnum,
-    type2: TypeEnum
-) {
+private fun TypeList(typeList: List<Types>) {
     Row(horizontalArrangement = Arrangement.Center) {
         Box(
             modifier = Modifier
                 .height(16.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(color = type1.color, shape = RoundedCornerShape(10.dp))
-                .padding(horizontal = 8.dp),
-            contentAlignment = Alignment.Center
+                .background(
+                    color = typeList.first().type.typeEnum.color, shape = RoundedCornerShape(10.dp)
+                )
+                .padding(horizontal = 8.dp), contentAlignment = Alignment.Center
         ) {
             Text(
-                type1.toString(),
-                style = Subtitle3,
-                color = white
+                typeList.first().type.typeEnum.toString(), style = Subtitle3, color = white
             )
         }
 
-        Spacer(Modifier.width(16.dp))
+        if (typeList.size > 1) {
+            Spacer(Modifier.width(16.dp))
 
-        Box(
-            modifier = Modifier
-                .height(16.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(color = type2.color, shape = RoundedCornerShape(10.dp))
-                .padding(horizontal = 8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                type2.toString(),
-                style = Subtitle3,
-                color = white
-            )
+            Box(
+                modifier = Modifier
+                    .height(16.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        color = typeList[1].type.typeEnum.color, shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(horizontal = 8.dp), contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    typeList[1].type.typeEnum.toString(), style = Subtitle3, color = white
+                )
+            }
         }
     }
 }
@@ -296,9 +309,7 @@ private fun About(
             .padding(horizontal = 20.dp)
     ) {
         Text(
-            "About",
-            style = Subtitle1,
-            color = color
+            "About", style = Subtitle1, color = color
         )
 
         Spacer(Modifier.height(16.dp))
@@ -323,7 +334,7 @@ private fun About(
             )
             VerticalDivider(thickness = 1.dp, color = light)
             Info(
-                value = "${moves[0]}\n${moves[1]}",
+                value = "${moves.first()}\n${if (moves.size > 1) moves[1] else ""}",
                 title = "Moves",
                 modifier = Modifier.weight(1f)
             )
@@ -333,14 +344,10 @@ private fun About(
 
 @Composable
 private fun Info(
-    icon: Int? = null,
-    title: String,
-    value: String,
-    modifier: Modifier
+    icon: Int? = null, title: String, value: String, modifier: Modifier
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -360,15 +367,11 @@ private fun Info(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    value,
-                    style = Body3,
-                    color = dark
+                    value, style = Body3, color = dark
                 )
             } else {
                 Text(
-                    value,
-                    style = Body3,
-                    color = dark
+                    value, style = Body3, color = dark
                 )
             }
         }
@@ -376,9 +379,7 @@ private fun Info(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            title,
-            style = Caption,
-            color = medium
+            title, style = Caption, color = medium
         )
     }
 }
@@ -392,9 +393,7 @@ private fun BaseStats(stats: List<Int>, color: Color = wireframe) {
             .padding(horizontal = 20.dp)
     ) {
         Text(
-            "Base Stats",
-            style = Subtitle1,
-            color = color
+            "Base Stats", style = Subtitle1, color = color
         )
 
         Spacer(Modifier.height(16.dp))
@@ -427,8 +426,7 @@ private fun Stat(title: String, value: Int, color: Color) {
         )
         Spacer(Modifier.width(12.dp))
         VerticalDivider(
-            thickness = 1.dp,
-            color = light
+            thickness = 1.dp, color = light
         )
         Spacer(Modifier.width(12.dp))
         Text(
